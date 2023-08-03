@@ -25,5 +25,7 @@ jobs:
           plugin_notable: yes
           plugin_notable_indepth: yes
           plugin_notable_repositories: yes
+          plugin_notable_from: all
+          plugin_notable_self: yes
           config_timezone: Asia/Hong_Kong
           config_order: base.header, isocalendar, habits, notable, achievements
