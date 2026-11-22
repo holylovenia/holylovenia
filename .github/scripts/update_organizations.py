@@ -139,7 +139,9 @@ def update_svg(organizations):
     height = re.search(r'\bheight="(\d+)"', header.group())
     if not height:
         raise RuntimeError("Metrics SVG height was not found")
-    extra = 48 + 28 * max(1, len(organizations))
+    # 22px avatars plus the existing 2px row gap, and a compact heading.
+    # Avoid reserving unnecessary whitespace beneath the final calendar.
+    extra = 34 + 24 * max(1, len(organizations))
     new_height = int(height.group(1)) - previous_extra + extra
     new_header = header.group().replace(
         height.group(), f'height="{new_height}"', 1
