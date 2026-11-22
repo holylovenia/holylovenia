@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Keep the profile README's organization section in sync with GitHub."""
+"""Keep organization memberships in the profile SVG up to date."""
 
 import base64
 import hashlib
@@ -12,16 +12,14 @@ from urllib.error import URLError
 from urllib.parse import quote, urlsplit
 from urllib.request import Request, urlopen
 
-START = "<!-- organizations:start -->"
-END = "<!-- organizations:end -->"
 PROFILE = "holylovenia"
 README = Path("README.md")
 METRICS = Path("github-metrics.svg")
 
 
 def fetch_organizations():
-    # Public memberships are safe to show in a publicly readable README.
-    # Private memberships are opt-in because publishing them reveals them.
+    # Private memberships are opt-in because embedding them in the public SVG
+    # makes those memberships visible to everyone.
     include_private = os.getenv("INCLUDE_PRIVATE_ORGS", "false").lower() == "true"
     if include_private:
         token = os.environ.get("METRICS_TOKEN")
@@ -69,25 +67,6 @@ def fetch_organizations():
     else:
         raise RuntimeError("Too many organization pages; update pagination limit")
     return sorted(organizations.values(), key=lambda org: org["login"].lower())
-
-
-def render(organizations):
-    rows = [f"### Organizations ({len(organizations)})", ""]
-    if not organizations:
-        rows.append("_No organization memberships were returned by GitHub._")
-    for org in organizations:
-        login = org["login"]
-        url = f"https://github.com/{quote(login)}"
-        # Generated from GitHub's own organization metadata.
-        avatar = org.get("avatar_url") or ""
-        logo = (
-            f'<img src="{escape(avatar, quote=True)}" width="24" height="24" '
-            f'alt="" /> '
-            if avatar.startswith("https://")
-            else ""
-        )
-        rows.append(f"- {logo}[{escape(login)}]({url})")
-    return "\n".join(rows)
 
 
 
@@ -179,21 +158,17 @@ def update_svg(organizations):
 
 
 def main():
-    text = README.read_text(encoding="utf-8")
-    if text.count(START) != 1 or text.count(END) != 1:
-        raise RuntimeError("README must contain exactly one organizations marker pair")
-    left, rest = text.split(START, 1)
-    _, right = rest.split(END, 1)
+    # The README contains just the metrics image; organizations live in the SVG.
     organizations = fetch_organizations()
-    updated = f"{left}{START}\n{render(organizations)}\n{END}{right}"
     update_svg(organizations)
     # Use the final SVG contents as a stable cache-buster for GitHub's image proxy.
+    text = README.read_text(encoding="utf-8")
     svg_digest = hashlib.sha256(METRICS.read_bytes()).hexdigest()[:12]
     image_pattern = r'(?m)^!\[Metrics\]\(\./github-metrics\.svg(?:\?v=[^)]+)?\)$'
     updated, replacements = re.subn(
         image_pattern,
         f'![Metrics](./github-metrics.svg?v={svg_digest})',
-        updated,
+        text,
         count=1,
     )
     if replacements != 1:
