@@ -1,1 +1,1 @@
-![Metrics](./github-metrics.svg?v=1f11fa2a03cc)
+![Metrics](./github-metrics.svg?v=78c512acb9f9)
