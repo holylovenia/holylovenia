@@ -1,7 +1,9 @@
 ![Metrics](./github-metrics.svg?v=2)
 
 <!-- organizations:start -->
-### Organizations
+### Organizations (3)
 
-_Updated automatically from public GitHub memberships._
+- <img src="https://avatars.githubusercontent.com/u/25915230?v=4" width="24" height="24" alt="" /> [acl-org](https://github.com/acl-org)
+- <img src="https://avatars.githubusercontent.com/u/38862586?v=4" width="24" height="24" alt="" /> [HLTCHKUST](https://github.com/HLTCHKUST)
+- <img src="https://avatars.githubusercontent.com/u/87266115?v=4" width="24" height="24" alt="" /> [IndoNLP](https://github.com/IndoNLP)
 <!-- organizations:end -->
